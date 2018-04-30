@@ -32,18 +32,13 @@ void setup() {
       println(cameras[i]);
     } 
     cam = new Capture(this, 960, 540, cameras[2]);
-    // For Logitech c 615
-    // the 16th one is 1920 x 1080 at 15fps
-    // the 20th one is 960 x 540 at 15fps
-    // the 22th one is 480 x 270 at 15fps
-    // the 25th one is 240 x 135 at 15fps
     cam.start();
   }
 
   // Create the OpenCV object
   opencv = new OpenCV(this, cam.width/scale, cam.height/scale);
 
-  // Which "cascade" are we going to use?
+  // Choose a cascade to load
   opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE); 
 
   // Make scaled down image
@@ -100,31 +95,16 @@ void draw() {
   // If we find faces, draw them!
   if (faces != null) {
     for (int i = 0; i < faces.length; i++) {
-      // draw boxes around the faces
-      //strokeWeight(2);
-      //stroke(255, 0, 0);
-      //noFill();
-      //rect(faces[0].x * scale, faces[0].y * scale, faces[0].width * scale, faces[0].height * scale);
-
-      //if(faces.length != lastFaceCount) {
-        // crop out the faces and save them
         PImage cropped = createImage(faces[0].width * scale, faces[0].height * scale, RGB);
         cropped.copy(cam, faces[0].x * scale, faces[0].y * scale, faces[0].width * scale, faces[0].height * scale, 0, 0, faces[0].width * scale, faces[0].height * scale);
         cropped.resize(240, 0);
         cropped.updatePixels(); 
         cropped.save(dataPath("faces/faceCapture" + faceCaptureCount + ".jpg"));
-        faceCaptureCount++;
-        
+        faceCaptureCount++;      
         lastFaceCount = faces.length; 
-      //}
     }
   }
-
-  //delay(250); 
-  //// since the frame rate default is 60 frames and there are 1000 miliseocnds per second
-  //// but we only want 15 frames, so we delay it by 250 miliseconds. 
-
-  //Add the white grid
+  
   fill(0);
   noStroke();
   for (int gx = 0; gx < 5; gx++) {
